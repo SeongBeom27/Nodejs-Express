@@ -11,6 +11,7 @@ const path = require('path');
 const sanitizeHtml = require('sanitize-html');
 //Get method : Routing
 
+
 // -> 길을 따라 갈 때 적당한 곳으로 가게 방향을 잡아주는 역할
 app.get('/', (req, res) => {
     fs.readdir('./data', function(error, filelist) {
