@@ -13,7 +13,9 @@ var bodyParser = require('body-parser');
 var compression = require('compression');
 //Get method : Routing
 
-
+// public 디렉토리 안에서 static 파일을 찾겠다.
+// 정적인 파일을 사용하려면 정적인 파일을 사용하는 디렉토리를 아래와 같이 지정해야 한다.
+app.use(express.static('public'));
 // Post 데이터를 처리해주는 미들웨어
 app.use(bodyParser.urlencoded({ extended: false }));
 // 압축 
@@ -30,15 +32,15 @@ app.get('*', function(req, res, next) {
 });
 
 
-
-
 // -> 길을 따라 갈 때 적당한 곳으로 가게 방향을 잡아주는 역할
 app.get('/', (req, res) => {
     let title = 'Welcome';
     let description = 'Hello, Node.js';
     let list = template.list(req.list);
     let html = template.HTML(title, list,
-        `<h2>${title}</h2>${description}`,
+        `<h2>${title}</h2>${description}
+        <img src="/images/hello.jpg" style="width:500px; height: 300px; display:block; margin-top:10px;">
+        `,
         `<a href="/create">create</a>`
     );
     res.send(html);
