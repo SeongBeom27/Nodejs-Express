@@ -46,25 +46,29 @@ app.get('/', (req, res) => {
     res.send(html);
 })
 
-app.get('/page/:pageId', function(req, res) {
+app.get('/page/:pageId', function(req, res, next) {
     var filteredId = path.parse(req.params.pageId).base;
     fs.readFile(`data/${filteredId}`, 'utf8', function(err, description) {
-        var title = req.params.pageId;
-        var sanitizedTitle = sanitizeHtml(title);
-        var sanitizedDescription = sanitizeHtml(description, {
-            allowedTags: ['h1']
-        });
-        var list = template.list(req.list);
-        var html = template.HTML(sanitizedTitle, list,
-            `<h2>${sanitizedTitle}</h2>${sanitizedDescription}`,
-            ` <a href="/create">create</a>
-                <a href="/update?id=${sanitizedTitle}">update</a>
-                <form action="/delete_process" method="post">
-                  <input type="hidden" name="id" value="${sanitizedTitle}">
-                  <input type="submit" value="delete">
-                </form>`
-        );
-        res.send(html);
+        if (err) {
+            next(err);
+        } else {
+            var title = req.params.pageId;
+            var sanitizedTitle = sanitizeHtml(title);
+            var sanitizedDescription = sanitizeHtml(description, {
+                allowedTags: ['h1']
+            });
+            var list = template.list(req.list);
+            var html = template.HTML(sanitizedTitle, list,
+                `<h2>${sanitizedTitle}</h2>${sanitizedDescription}`,
+                ` <a href="/create">create</a>
+                    <a href="/update?id=${sanitizedTitle}">update</a>
+                    <form action="/delete_process" method="post">
+                      <input type="hidden" name="id" value="${sanitizedTitle}">
+                      <input type="submit" value="delete">
+                    </form>`
+            );
+            res.send(html);
+        }
     });
     // return이 있어도되고 없어도 된다.
 });
@@ -151,12 +155,15 @@ app.post('/delete_process', function(req, res) {
     })
 });
 
-/**
- * ==
- *  app.get('/', function(req, res){
- *    return res.send('Hello World!!') 
- *  })
- */
+app.use(function(req, res, next) {
+    res.status(404).send('Sorry cant find that!');
+});
+
+// 4개의 인자를 가진 미들 웨어는 Express에서 에러 핸들링을 윙한 middle ware라고 생각하자
+app.use(function(err, req, res, next) {
+    console.error(err.stack)
+    res.status(500).send('Something broke!')
+})
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
