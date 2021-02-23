@@ -11,6 +11,7 @@ const path = require('path');
 const sanitizeHtml = require('sanitize-html');
 var bodyParser = require('body-parser');
 var compression = require('compression');
+var helmet = require('helmet');
 //Get method : Routing
 
 // public 디렉토리 안에서 static 파일을 찾겠다.
@@ -20,6 +21,9 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 // 압축 
 app.use(compression());
+// Security 
+app.use(helmet());
+
 // middle ware 함수는 반드시 req, res, ... (변수 or 함수들)
 // get 방식으로 들어오는 요청의 모든 요청에 대하여 req.list 라는 변수를 만드는 것이다.
 app.get('*', function(req, res, next) {
@@ -30,7 +34,6 @@ app.get('*', function(req, res, next) {
         next();
     });
 });
-
 
 // -> 길을 따라 갈 때 적당한 곳으로 가게 방향을 잡아주는 역할
 app.get('/', (req, res) => {
@@ -46,7 +49,7 @@ app.get('/', (req, res) => {
     res.send(html);
 })
 
-app.get('/page/:pageId', function(req, res, next) {
+app.get('/topic/:pageId', function(req, res, next) {
     var filteredId = path.parse(req.params.pageId).base;
     fs.readFile(`data/${filteredId}`, 'utf8', function(err, description) {
         if (err) {
@@ -88,7 +91,6 @@ app.get('/create', function(req, res) {
               </form>
             `, '');
     res.send(html);
-
 });
 
 // post 방식으로 데이터 받는 경우
