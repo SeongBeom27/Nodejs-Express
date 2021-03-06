@@ -12,6 +12,9 @@ const sanitizeHtml = require('sanitize-html');
 var bodyParser = require('body-parser');
 var compression = require('compression');
 var helmet = require('helmet');
+var db = require('./lib/db');
+var topic = require('./lib/topic');
+var author = require('./lib/author');
 //Get method : Routing
 
 // public 디렉토리 안에서 static 파일을 찾겠다.
@@ -37,16 +40,7 @@ app.get('*', function(req, res, next) {
 
 // -> 길을 따라 갈 때 적당한 곳으로 가게 방향을 잡아주는 역할
 app.get('/', (req, res) => {
-    let title = 'Welcome';
-    let description = 'Hello, Node.js';
-    let list = template.list(req.list);
-    let html = template.HTML(title, list,
-        `<h2>${title}</h2>${description}
-        <img src="/images/hello.jpg" style="width:500px; height: 300px; display:block; margin-top:10px;">
-        `,
-        `<a href="/create">create</a>`
-    );
-    res.send(html);
+    topic.home(res);
 })
 
 app.get('/topic/:pageId', function(req, res, next) {
