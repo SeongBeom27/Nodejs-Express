@@ -44,30 +44,32 @@ app.get('/', (req, res) => {
 })
 
 app.get('/topic/:pageId', function(req, res, next) {
-    var filteredId = path.parse(req.params.pageId).base;
-    fs.readFile(`data/${filteredId}`, 'utf8', function(err, description) {
-        if (err) {
-            next(err);
-        } else {
-            var title = req.params.pageId;
-            var sanitizedTitle = sanitizeHtml(title);
-            var sanitizedDescription = sanitizeHtml(description, {
-                allowedTags: ['h1']
-            });
-            var list = template.list(req.list);
-            var html = template.HTML(sanitizedTitle, list,
-                `<h2>${sanitizedTitle}</h2>${sanitizedDescription}`,
-                ` <a href="/create">create</a>
-                    <a href="/update?id=${sanitizedTitle}">update</a>
-                    <form action="/delete_process" method="post">
-                      <input type="hidden" name="id" value="${sanitizedTitle}">
-                      <input type="submit" value="delete">
-                    </form>`
-            );
-            res.send(html);
-        }
-    });
+    // var filteredId = path.parse(req.params.pageId).base;
+    // fs.readFile(`data/${filteredId}`, 'utf8', function(err, description) {
+    //     if (err) {
+    //         next(err);
+    //     } else {
+    //         var title = req.params.pageId;
+    //         var sanitizedTitle = sanitizeHtml(title);
+    //         var sanitizedDescription = sanitizeHtml(description, {
+    //             allowedTags: ['h1']
+    //         });
+    //         var list = template.list(req.list);
+    //         var html = template.HTML(sanitizedTitle, list,
+    //             `<h2>${sanitizedTitle}</h2>${sanitizedDescription}`,
+    //             ` <a href="/create">create</a>
+    //                 <a href="/update?id=${sanitizedTitle}">update</a>
+    //                 <form action="/delete_process" method="post">
+    //                   <input type="hidden" name="id" value="${sanitizedTitle}">
+    //                   <input type="submit" value="delete">
+    //                 </form>`
+    //         );
+    //         res.send(html);
+    //     }
+    // });
+    topic.page(req, res, req.params.pageId);
     // return이 있어도되고 없어도 된다.
+    //});
 });
 
 app.get('/create', function(req, res) {
