@@ -42,65 +42,16 @@ app.get('*', function(req, res, next) {
 app.get('/', (req, res) => {
     topic.home(res);
 })
-
 app.get('/topic/:pageId', function(req, res, next) {
-    // var filteredId = path.parse(req.params.pageId).base;
-    // fs.readFile(`data/${filteredId}`, 'utf8', function(err, description) {
-    //     if (err) {
-    //         next(err);
-    //     } else {
-    //         var title = req.params.pageId;
-    //         var sanitizedTitle = sanitizeHtml(title);
-    //         var sanitizedDescription = sanitizeHtml(description, {
-    //             allowedTags: ['h1']
-    //         });
-    //         var list = template.list(req.list);
-    //         var html = template.HTML(sanitizedTitle, list,
-    //             `<h2>${sanitizedTitle}</h2>${sanitizedDescription}`,
-    //             ` <a href="/create">create</a>
-    //                 <a href="/update?id=${sanitizedTitle}">update</a>
-    //                 <form action="/delete_process" method="post">
-    //                   <input type="hidden" name="id" value="${sanitizedTitle}">
-    //                   <input type="submit" value="delete">
-    //                 </form>`
-    //         );
-    //         res.send(html);
-    //     }
-    // });
     topic.page(req, res, req.params.pageId);
-    // return이 있어도되고 없어도 된다.
-    //});
 });
 
 app.get('/create', function(req, res) {
-    var title = 'WEB - create';
-    var list = template.list(req.list);
-    var html = template.HTML(title, list, `
-              <form action="/create_process" method="post">
-                <p><input type="text" name="title" placeholder="title"></p>
-                <p>
-                  <textarea name="description" placeholder="description"></textarea>
-                </p>
-                <p>
-                  <input type="submit">
-                </p>
-              </form>
-            `, '');
-    res.send(html);
+    topic.create(req, res);
 });
-
 // post 방식으로 데이터 받는 경우
 app.post('/create_process', function(req, res) {
-    /**
-     *  아래 코드를 body parser 미들웨어 모듈로 가공해본다.
-     */
-    var post = req.body
-    var title = post.title;
-    var description = post.description;
-    fs.writeFile(`data/${title}`, description, 'utf8', function(err) {
-        res.writeHead(302, { Location: `/?id=${title}` });
-        res.end();
-    })
+    topic.create_process(req, res);
 });
 
 app.get('/update', function(req, res) {
