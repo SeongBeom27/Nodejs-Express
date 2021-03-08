@@ -83,15 +83,7 @@ app.get('/update', function(req, res) {
 })
 
 app.post('/update_process', function(req, res) {
-    var post = req.body;
-    var id = post.id;
-    var title = post.title;
-    var description = post.description;
-    fs.rename(`data/${id}`, `data/${title}`, function(error) {
-        fs.writeFile(`data/${title}`, description, 'utf8', function(err) {
-            res.redirect(`/?id=${title}`);
-        })
-    });
+    topic.update_process(req, res);
 });
 
 app.post('/delete_process', function(req, res) {
