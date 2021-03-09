@@ -17,6 +17,7 @@ var topic = require('./lib/topic');
 var author = require('./lib/author');
 //Get method : Routing
 
+
 // public 디렉토리 안에서 static 파일을 찾겠다.
 // 정적인 파일을 사용하려면 정적인 파일을 사용하는 디렉토리를 아래와 같이 지정해야 한다.
 app.use(express.static('public'));
