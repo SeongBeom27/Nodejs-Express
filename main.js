@@ -56,47 +56,17 @@ app.post('/create_process', function(req, res) {
 });
 
 app.get('/update', function(req, res) {
-    // var _url = req.url;
-    // var queryData = url.parse(_url, true).query;
-
-    // var filteredId = path.parse(queryData.id).base;
-    // fs.readFile(`data/${filteredId}`, 'utf8', function(err, description) {
-    //     var title = queryData.id;
-    //     var list = template.list(req.list);
-    //     var html = template.HTML(title, list,
-    //         `
-    //         <form action="/update_process" method="post">
-    //           <input type="hidden" name="id" value="${title}">
-    //           <p><input type="text" name="title" placeholder="title" value="${title}"></p>
-    //           <p>
-    //             <textarea name="description" placeholder="description">${description}</textarea>
-    //           </p>
-    //           <p>
-    //             <input type="submit">
-    //           </p>
-    //         </form>
-    //         `,
-    //         `<a href="/create">create</a> <a href="/update?id=${title}">update</a>`
-    //     );
-    //     res.send(html);
-    // });
     topic.update(req, res);
 })
-
 app.post('/update_process', function(req, res) {
     topic.update_process(req, res);
 });
 
 app.post('/delete_process', function(req, res) {
-    var post = req.body;
-    var id = post.id;
-    var filteredId = path.parse(id).base;
-    fs.unlink(`data/${filteredId}`, function(error) {
-        // express redirect 방법
-        res.redirect('/');
-    })
+    topic.delete_process(req, res);
 });
 
+// 예외 처리 부분 
 app.use(function(req, res, next) {
     res.status(404).send('Sorry cant find that!');
 });
