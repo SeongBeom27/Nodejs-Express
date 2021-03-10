@@ -43,6 +43,11 @@ app.get('*', function(req, res, next) {
 app.get('/', (req, res) => {
     topic.home(res);
 })
+
+/** 
+ * Topic 관련 Route 
+ */
+
 app.get('/topic/:pageId', function(req, res, next) {
     topic.page(req, res, req.params.pageId);
 });
@@ -65,6 +70,21 @@ app.post('/update_process', function(req, res) {
 app.post('/delete_process', function(req, res) {
     topic.delete_process(req, res);
 });
+
+/** 
+ * Author 관련 Route 
+ */
+
+app.get(`/author`, function(req, res) {
+    author.home(req, res);
+})
+
+
+
+
+
+
+
 
 // 예외 처리 부분 
 app.use(function(req, res, next) {
