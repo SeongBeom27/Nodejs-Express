@@ -79,7 +79,21 @@ app.get(`/author`, function(req, res) {
     author.home(req, res);
 })
 
+app.post('/author/create_process', function(req, res) {
+    author.create_process(req, res);
+})
 
+app.get('/author/update', function(req, res) {
+    author.update(req, res);
+})
+
+app.post('/author/update_process', function(req, res) {
+    author.update_process(req, res);
+})
+
+app.post('/author/delete_process', function(req, res) {
+    author.delete_process(req, res);
+})
 
 
 
