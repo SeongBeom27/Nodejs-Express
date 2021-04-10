@@ -110,6 +110,10 @@ app.get('/auth', function(req, res) {
     auth.login(req, res);
 })
 
+app.post('/auth/login_process', function(req, res) {
+    auth.login_process(req, res);
+})
+
 // 예외 처리 부분 
 app.use(function(req, res, next) {
     res.status(404).send('Sorry cant find that!');
