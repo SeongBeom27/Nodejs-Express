@@ -21,7 +21,16 @@ app.use(session({
 }))
 
 app.get('/', function(req, res, next) {
-    res.send('Hello session');
+    /**
+     * 사용자의 세션 데이터가 메모리에 저장되어서 서버가 껏다가 켜지면 전부 지워진다.
+     */
+    console.log(req.session);
+    if (req.session.num === undefined) {
+        req.session.num = 1;
+    } else {
+        req.session.num = req.session.num + 1;
+    }
+    res.send(`Views : ${req.session.num}`);
 })
 
 app.listen(3000, function() {
