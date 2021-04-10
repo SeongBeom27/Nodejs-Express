@@ -15,6 +15,10 @@ var helmet = require('helmet');
 var db = require('./lib/db');
 var topic = require('./lib/topic');
 var author = require('./lib/author');
+var auth = require('./lib/auth');
+
+var session = require('express-session');
+var FileStore = require('session-file-store')(session);
 //Get method : Routing
 
 // public 디렉토리 안에서 static 파일을 찾겠다.
@@ -26,6 +30,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(compression());
 // Security 
 app.use(helmet());
+
+app.use(session({
+    secret: 'asadlfkj!@#!@#dfgasdg',
+    resave: false,
+    saveUninitialized: true,
+    store: new FileStore()
+}))
 
 // middle ware 함수는 반드시 req, res, ... (변수 or 함수들)
 // get 방식으로 들어오는 요청의 모든 요청에 대하여 req.list 라는 변수를 만드는 것이다.
@@ -95,6 +106,9 @@ app.post('/author/delete_process', function(req, res) {
     author.delete_process(req, res);
 })
 
+app.get('/auth', function(req, res) {
+    auth.login(req, res);
+})
 
 // 예외 처리 부분 
 app.use(function(req, res, next) {
