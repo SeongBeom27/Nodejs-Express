@@ -9,6 +9,11 @@ const { request } = require('express')
 const { report } = require('process')
 
 exports.login = function (req, res) {
+  var fmsg = req.flash()
+  var feedback = ''
+  if (fmsg.error) {
+    feedback = fmsg.error[0]
+  }
   db.query(`SELECT * FROM topic`, function (error, topics) {
     var title = 'Welcome'
     var description = 'Hello, Node.js'
@@ -18,6 +23,7 @@ exports.login = function (req, res) {
       list,
       `                  
               <form action="/auth/login_process" method="post">
+                  <div style="color:red">${feedback}</div>
                   <p><input type="text" name="email" placeholder="email"></p>
                   <p><input type="password" name="password" placeholder="password"</p>
                   <p><input type="submit" value="login"></p>

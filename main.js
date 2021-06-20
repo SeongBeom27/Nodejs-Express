@@ -16,10 +16,10 @@ var db = require('./lib/db')
 var topic = require('./lib/topic')
 var author = require('./lib/author')
 var auth = require('./routes/auth')
-
 var session = require('express-session')
 // 이후에 db, hash db에 저장하는 것으로 바꾸기
 var FileStore = require('session-file-store')(session)
+var flash = require('connect-flash')
 //Get method : Routing
 
 // app.use는 사용자의 요청이 있을 때 마다 실행된다.
@@ -51,6 +51,7 @@ app.use(
     store: new FileStore(),
   })
 )
+app.use(flash())
 
 var authData = {
   email: 'egoing777@gmail.com',
@@ -124,6 +125,8 @@ app.post(
     successRedirect: '/',
     // 실패했을 때는 다음과 같이 보낸다.
     failureRedirect: '/auth/login',
+    failureFlash: true,
+    successFlash: true,
   })
 )
 
