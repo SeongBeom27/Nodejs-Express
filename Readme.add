@@ -1,1 +1,5 @@
-Using Express Framework
+pm2 Usage
+
+1. pm2 start main.js --watch --ignore-watch="sessions/*"
+
+=> session 값이 바뀔 경우에 웹서버를 껏다 키지 않게 한다."
