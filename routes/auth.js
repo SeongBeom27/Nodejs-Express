@@ -37,6 +37,11 @@ exports.login = function (req, res) {
 }
 
 exports.logout = function (req, res) {
+  /**
+   * session에서 직접 지워주는 로직을 사용하면 더 안전
+   *
+   * session.save : 현재 session의 상태를 저장하고 마무리
+   */
   req.logout()
   req.session.save(function () {
     res.redirect('/')
