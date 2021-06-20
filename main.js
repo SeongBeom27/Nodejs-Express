@@ -76,19 +76,16 @@ passport.serializeUser(function (user, done) {
   // null 값과 구분자를 넘겨준다. , 우리는 임의로 이메일을 넘겨준다.
   // 세션 데이터에서 어떤 사용자인지 id를 email로 구분하겠다는 의미이다.
   // -> session 파일 : "passport":{"user":"egoing777@gmail.com"}}
-  done(null, user.email)
+  done(null, user.email) // 세션 데이터에 두번째 인자 (구분자) 추가를 해준다.
 
   // done(null, user.id)
 })
 
 /**
- * @brief     login이 실패했을 때 발생하는 콜백
+ * @brief     저장된 세션 데이터를 기준으로 필요한 정보를 조회할 때 필요하다. 현재 사이트에 존재하는 사용자가 refresh할 때마다 호출된다.
  */
 passport.deserializeUser(function (id, done) {
   // 세션에서 사용자의 id를 기준으로 어떤 사용자인지 찾아서 user(auth) data를 가져온다.
-  // User.findById(id, function (err, user) {
-  //   done(err, user)
-  // })
   console.log('deserializeUser', id)
   done(null, authData)
 })
