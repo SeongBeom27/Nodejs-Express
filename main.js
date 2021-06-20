@@ -15,7 +15,7 @@ var helmet = require('helmet')
 var db = require('./lib/db')
 var topic = require('./lib/topic')
 var author = require('./lib/author')
-var auth = require('./lib/auth')
+var auth = require('./routes/auth')
 
 var session = require('express-session')
 // 이후에 db, hash db에 저장하는 것으로 바꾸기
@@ -87,6 +87,7 @@ passport.serializeUser(function (user, done) {
 passport.deserializeUser(function (id, done) {
   // 세션에서 사용자의 id를 기준으로 어떤 사용자인지 찾아서 user(auth) data를 가져온다.
   console.log('deserializeUser', id)
+  // deserializeUser 내부 done의 두번째 인자는 request 객체에 user porperty로 추가가 된다.
   done(null, authData)
 })
 
@@ -139,7 +140,7 @@ app.get('*', function (req, res, next) {
 
 // -> 길을 따라 갈 때 적당한 곳으로 가게 방향을 잡아주는 역할
 app.get('/', (req, res) => {
-  topic.home(res)
+  topic.home(req, res)
 })
 
 /**
@@ -198,6 +199,10 @@ app.get('/auth/login', function (req, res) {
   auth.login(req, res)
 })
 
+app.get('/auth/logout', function (req, res) {
+  auth.logout(req, res)
+})
+
 /**
  * login form에서 전송한 데이터를 받기로했다.
  */
@@ -211,9 +216,9 @@ app.get('/auth/login', function (req, res) {
 //   })
 // )
 
-app.post('/auth/login_process', function (req, res) {
-  auth.login_process(req, res)
-})
+// app.post('/auth/login_process', function (req, res) {
+//   auth.login_process(req, res)
+// })
 
 // 예외 처리 부분
 app.use(function (req, res, next) {
