@@ -53,82 +53,7 @@ app.use(
 )
 app.use(flash())
 
-var authData = {
-  email: 'egoing777@gmail.com',
-  password: '111111',
-  nickname: 'egoing',
-}
-
-// passport는 session을 내부적으로 사용하기 때문에 session 다음에 호출되어야 한다.
-var passport = require('passport'),
-  LocalStrategy = require('passport-local').Strategy
-
-app.use(passport.initialize())
-app.use(passport.session())
-
-// passport가 session 데이터를 처리하기 위해서는 serializeUser, deserializeUser가 필요하다.
-
-/**
- * @brief       login이 성공했을 때 발생하는 콜백
- * @param user  로그인 성공한 auth 데이터
- */
-passport.serializeUser(function (user, done) {
-  console.log('serializeUser', user)
-  // null 값과 구분자를 넘겨준다. , 우리는 임의로 이메일을 넘겨준다.
-  // 세션 데이터에서 어떤 사용자인지 id를 email로 구분하겠다는 의미이다.
-  // -> session 파일 : "passport":{"user":"egoing777@gmail.com"}}
-  done(null, user.email) // 세션 데이터에 두번째 인자 (구분자) 추가를 해준다.
-
-  // done(null, user.id)
-})
-
-/**
- * @brief     저장된 세션 데이터를 기준으로 필요한 정보를 조회할 때 필요하다. 현재 사이트에 존재하는 사용자가 refresh할 때마다 호출된다.
- */
-passport.deserializeUser(function (id, done) {
-  // 세션에서 사용자의 id를 기준으로 어떤 사용자인지 찾아서 user(auth) data를 가져온다.
-  console.log('deserializeUser', id)
-  // deserializeUser 내부 done의 두번째 인자는 request 객체에 user porperty로 추가가 된다.
-  done(null, authData)
-})
-
-/**
- * @brief     아이디, 비밀번호는 어떻게 비교 후 반환하는 메소드
- */
-passport.use(
-  new LocalStrategy(
-    {
-      usernameField: 'email',
-      passwordField: 'password',
-    },
-    function (username, password, done) {
-      console.log('LocalStrategy', username, password)
-      if (username === authData.email) {
-        if (password === authData.password) {
-          return done(null, authData)
-        } else {
-          return done(null, false, { message: 'Incorrect password.' })
-        }
-      } else {
-        return done(null, false, { message: 'Incorrect Email.' })
-      }
-    }
-  )
-)
-/**
- * @brief     form을 통해서 전송된 데이터를 다음 passport가 받아서 local strategy로 처리한다.
- */
-app.post(
-  '/auth/login_process',
-  passport.authenticate('local', {
-    // 로그인을 성공했을 때는 '/' 즉, 홈으로 보내고
-    successRedirect: '/',
-    // 실패했을 때는 다음과 같이 보낸다.
-    failureRedirect: '/auth/login',
-    failureFlash: true,
-    successFlash: true,
-  })
-)
+var passport = require('./lib/passport')(app)
 
 // middle ware 함수는 반드시 req, res, ... (변수 or 함수들)
 // get 방식으로 들어오는 요청의 모든 요청에 대하여 req.list 라는 변수를 만드는 것이다.
@@ -201,6 +126,21 @@ app.post('/author/delete_process', function (req, res) {
 app.get('/auth/login', function (req, res) {
   auth.login(req, res)
 })
+
+/**
+ * @brief     form을 통해서 전송된 데이터를 다음 passport가 받아서 local strategy로 처리한다.
+ */
+app.post(
+  '/auth/login_process',
+  passport.authenticate('local', {
+    // 로그인을 성공했을 때는 '/' 즉, 홈으로 보내고
+    successRedirect: '/',
+    // 실패했을 때는 다음과 같이 보낸다.
+    failureRedirect: '/auth/login',
+    failureFlash: true,
+    successFlash: true,
+  })
+)
 
 app.get('/auth/logout', function (req, res) {
   auth.logout(req, res)
