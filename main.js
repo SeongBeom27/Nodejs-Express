@@ -199,6 +199,10 @@ app.get('/auth/login', function (req, res) {
   auth.login(req, res)
 })
 
+app.get('/auth/register', function (req, res) {
+  auth.register(req, res)
+})
+
 app.get('/auth/logout', function (req, res) {
   auth.logout(req, res)
 })
