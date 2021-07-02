@@ -7,6 +7,7 @@ var sanitizeHtml = require('sanitize-html')
 var template = require('../lib/template.js')
 const { request } = require('express')
 const { report } = require('process')
+var db = require('../lib/db')
 
 exports.login = function (req, res) {
   db.query(`SELECT * FROM topic`, function (error, topics) {
@@ -77,7 +78,7 @@ exports.register_process = function (req, res) {
   // express에서 제공해준는 req.body <- post data를 간단하게 parsing 해올 수 있다.
   var post = req.body
   db.query(
-    `INSERT INTO topic (email, pwd, name) VALUES(?, ?, ?);`,
+    `INSERT INTO member (email, pwd, name) VALUES(?, ?, ?);`,
     [post.email, post.pwd2, post.displayName],
     function (error, result) {
       // dbquery function의 result 객체는 insertId라는 key를 가지고 있다.

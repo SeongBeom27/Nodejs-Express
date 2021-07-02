@@ -203,6 +203,10 @@ app.get('/auth/register', function (req, res) {
   auth.register(req, res)
 })
 
+app.post('/auth/register_process', function (req, res) {
+  auth.register_process(req, res)
+})
+
 app.get('/auth/logout', function (req, res) {
   auth.logout(req, res)
 })
