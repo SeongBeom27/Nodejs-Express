@@ -22,6 +22,9 @@ var session = require('express-session')
 var FileStore = require('session-file-store')(session)
 //Get method : Routing
 
+var topicRouter = require('./routes/topic')
+var indexRouter = require('./routes/index')
+
 // app.use는 사용자의 요청이 있을 때 마다 실행된다.
 
 // public 디렉토리 안에서 static 파일을 찾겠다.
@@ -113,6 +116,11 @@ passport.use(
     }
   )
 )
+
+app.use('/', indexRouter)
+// /topic 으로 시작하는 주소들에게 topicRouter 미들웨어를 적용하겠다는 뜻
+app.use('/topic', topicRouter)
+
 /**
  * @brief     form을 통해서 전송된 데이터를 다음 passport가 받아서 local strategy로 처리한다.
  */
@@ -135,39 +143,6 @@ app.get('*', function (req, res, next) {
     // next 에는 그다음에 실행되어야할 미들 웨어가 담겨있다. 즉, 미들웨어가 실행이 된다.
     next()
   })
-})
-
-// -> 길을 따라 갈 때 적당한 곳으로 가게 방향을 잡아주는 역할
-app.get('/', (req, res) => {
-  topic.home(res)
-})
-
-/**
- * Topic 관련 Route
- */
-// :pageId, pageID로 들어오는 값을 req의 params의 속성으로 추가시킨다
-app.get('/topic/:pageId', function (req, res, next) {
-  topic.page(req, res, req.params.pageId)
-})
-
-app.get('/topic/create', function (req, res) {
-  topic.create(req, res)
-})
-// post 방식으로 데이터 받는 경우
-app.post('/create_process', function (req, res) {
-  topic.create_process(req, res)
-})
-
-app.get('/update', function (req, res) {
-  topic.update(req, res)
-})
-
-app.post('/update_process', function (req, res) {
-  topic.update_process(req, res)
-})
-
-app.post('/delete_process', function (req, res) {
-  topic.delete_process(req, res)
 })
 
 /**
