@@ -24,6 +24,8 @@ var FileStore = require('session-file-store')(session)
 
 var topicRouter = require('./routes/topic')
 var indexRouter = require('./routes/index')
+var authorRouter = require('./routes/author')
+var authRouter = require('./routes/auth')
 
 // app.use는 사용자의 요청이 있을 때 마다 실행된다.
 
@@ -72,7 +74,9 @@ app.use(passport.session())
 
 /**
  * @brief       login이 성공했을 때 발생하는 콜백
+ *              session에 user property로 값은 email을 저장
  * @param user  로그인 성공한 auth 데이터
+ *
  */
 passport.serializeUser(function (user, done) {
   console.log('serializeUser', user)
@@ -85,7 +89,11 @@ passport.serializeUser(function (user, done) {
 })
 
 /**
- * @brief     저장된 세션 데이터를 기준으로 필요한 정보를 조회할 때 필요하다. 현재 사이트에 존재하는 사용자가 refresh할 때마다 호출된다.
+ * @brief     저장된 세션 데이터를 기준으로 필요한 정보를 조회할 때 필요하다.
+ *            현재 사이트에 존재하는 사용자가 refresh할 때마다 호출된다.
+ *            페이지에 방문할 때마다 session에 store되어있는 user를 기준으로  데이터를 가져온다.
+ * @done      request의 객체로 user에 두번째 인자인 authData를 넘겨준다.
+ *            즉, request.user 객체가 생기게 된다.
  */
 passport.deserializeUser(function (id, done) {
   // 세션에서 사용자의 id를 기준으로 어떤 사용자인지 찾아서 user(auth) data를 가져온다.
@@ -120,19 +128,8 @@ passport.use(
 app.use('/', indexRouter)
 // /topic 으로 시작하는 주소들에게 topicRouter 미들웨어를 적용하겠다는 뜻
 app.use('/topic', topicRouter)
-
-/**
- * @brief     form을 통해서 전송된 데이터를 다음 passport가 받아서 local strategy로 처리한다.
- */
-app.post(
-  '/auth/login_process',
-  passport.authenticate('local', {
-    // 로그인을 성공했을 때는 '/' 즉, 홈으로 보내고
-    successRedirect: '/',
-    // 실패했을 때는 다음과 같이 보낸다.
-    failureRedirect: '/auth/login',
-  })
-)
+app.use('/author', authorRouter)
+app.use('/auth', authRouter)
 
 // middle ware 함수는 반드시 req, res, ... (변수 or 함수들)
 // get 방식으로 들어오는 요청의 모든 요청에 대하여 req.list 라는 변수를 만드는 것이다.
@@ -143,51 +140,6 @@ app.get('*', function (req, res, next) {
     // next 에는 그다음에 실행되어야할 미들 웨어가 담겨있다. 즉, 미들웨어가 실행이 된다.
     next()
   })
-})
-
-/**
- * Author 관련 Route
- */
-
-app.get(`/author`, function (req, res) {
-  author.home(req, res)
-})
-
-app.post('/author/create_process', function (req, res) {
-  author.create_process(req, res)
-})
-
-app.get('/author/update', function (req, res) {
-  author.update(req, res)
-})
-
-app.post('/author/update_process', function (req, res) {
-  author.update_process(req, res)
-})
-
-app.post('/author/delete_process', function (req, res) {
-  author.delete_process(req, res)
-})
-
-app.get('/auth/login', function (req, res) {
-  auth.login(req, res)
-})
-
-/**
- * login form에서 전송한 데이터를 받기로했다.
- */
-// app.post(
-//   '/auth/login_process',
-//   passport.authenticate('local', {
-//     // 성공했을 때는 루트로
-//     successRedirec: '/',
-//     // 실패했으면 다시 재진입
-//     failureRedirect: '/auth',
-//   })
-// )
-
-app.post('/auth/login_process', function (req, res) {
-  auth.login_process(req, res)
 })
 
 // 예외 처리 부분
